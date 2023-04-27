@@ -1,7 +1,7 @@
 const { check, body } = require("express-validator");
 
 // AUTH VALIDATION
-exports.login_validation = [check("mobile").isEmail()];
+exports.login_validation = [check("mobile").notEmpty()];
 
 exports.update = [check("name").notEmpty(), check("email").notEmpty()];
 

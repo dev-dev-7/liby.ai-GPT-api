@@ -1,0 +1,8 @@
+runtime: nodejs16
+env: standard
+# runtime_config:
+#       operating_system: "ubuntu22"
+service: ola-api
+handlers:
+  - url: .*
+    script: auto

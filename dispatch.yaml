@@ -1,0 +1,9 @@
+dispatch:
+  - url: "afkkarr.com/*"
+    service: default
+  - url: "sec-dashboard.afkkarr.com/*"
+    service: sec-dashboard
+  - url: "ola.afkkarr.com/*"
+    service: ola
+  - url: "ola-api.afkkarr.com/*"
+    service: ola-api

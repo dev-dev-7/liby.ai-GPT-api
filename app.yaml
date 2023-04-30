@@ -2,7 +2,7 @@ runtime: nodejs16
 env: standard
 # runtime_config:
 #       operating_system: "ubuntu22"
-service: ola-api
+service: liby-api
 handlers:
   - url: .*
     script: auto

@@ -11,6 +11,12 @@ router.post("/verify-otp", validation.otp, authController.verifyOtp);
 
 router.post("/resend-otp", validation.resend_otp, authController.resendOtp);
 
+router.post(
+  "/subscribe",
+  [validation.package, verifyToken],
+  authController.subscribe
+);
+
 router.put(
   "/profile/update/:user_id",
   [validation.update, verifyToken],

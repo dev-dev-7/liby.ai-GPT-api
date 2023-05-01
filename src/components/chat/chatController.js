@@ -1,6 +1,6 @@
 require("dotenv").config();
 const chatModel = require("./chatModel");
-const authController = require("../auth/authController");
+const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
@@ -33,7 +33,7 @@ exports.createChat = async (req, res) => {
     prompt: req.body.question,
   });
   if (completion.data.choices[0].text) {
-    let user = await authController.authorization(req, res);
+    let user = await authorization.authorization(req, res);
     let category = await chatModel.getCategoryById(req.body.category_id);
     if (user && category) {
       var body = {
@@ -61,7 +61,7 @@ exports.recentChats = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let user = await authController.authorization(req, res);
+  let user = await authorization.authorization(req, res);
   let category = await chatModel.getCategoryById(req.body.category_id);
   if (user && category) {
     chats = await chatModel.getRecentChats(user.user_id, category.id);

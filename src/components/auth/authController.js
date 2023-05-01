@@ -1,5 +1,6 @@
 require("dotenv").config();
 const authModel = require("./authModel");
+const authorization = require("../../helpers/authorization");
 const jwt = require("jsonwebtoken");
 const config = require("../../config/index");
 const { validationResult } = require("express-validator");
@@ -93,20 +94,17 @@ exports.update = async (req, res) => {
   }
 };
 
-exports.authorization = async (req, res) => {
-  if (req.headers && req.headers.authorization) {
-    var authorization = req.headers.authorization.split(" ")[1],
-      decoded;
-    try {
-      decoded = jwt.verify(authorization, JWT_SECRETE_KEY);
-    } catch (e) {
-      return res.status(401).send("unauthorized");
-    }
-    if (decoded?.user) {
-      return decoded?.user;
-    } else {
-      return null;
-    }
+exports.subscribe = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-  return res.send(500);
+  let user = await authorization.authorization(req, res);
+  if (user) {
+    return res.status(200).json({
+      msg: "Payment link generated",
+    });
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Not Found" }] });
+  }
 };

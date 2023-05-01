@@ -82,6 +82,8 @@ exports.update = async (req, res) => {
     await authModel.updateUser(req.params.user_id, {
       name: req.body.name,
       email: req.body.email,
+      dob: req.body.dob,
+      address: req.body.address,
     });
     return res.status(201).json({
       data: await authModel.getUserById(req.params.user_id),

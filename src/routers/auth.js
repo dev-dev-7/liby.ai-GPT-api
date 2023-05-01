@@ -12,7 +12,7 @@ router.post("/verify-otp", validation.otp, authController.verifyOtp);
 router.post("/resend-otp", validation.resend_otp, authController.resendOtp);
 
 router.put(
-  "/update/:user_id",
+  "/profile/update/:user_id",
   [validation.update, verifyToken],
   authController.update
 );

@@ -1,7 +1,6 @@
 require("dotenv").config();
 const chatModel = require("./chatModel");
 const authController = require("../auth/authController");
-const authModel = require("../auth/authModel");
 const { validationResult } = require("express-validator");
 
 exports.getCategories = async (req, res) => {

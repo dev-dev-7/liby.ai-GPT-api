@@ -9,6 +9,12 @@ router.post("/auth", validation.login_validation, authController.login);
 
 router.post("/verify-otp", validation.otp, authController.verifyOtp);
 
-router.put("/update", [validation.update, verifyToken], authController.update);
+router.post("/resend-otp", validation.resend_otp, authController.resendOtp);
+
+router.put(
+  "/update/:user_id",
+  [validation.update, verifyToken],
+  authController.update
+);
 
 module.exports = router;

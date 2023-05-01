@@ -1,10 +1,10 @@
 const db = require("../../config/connection");
 const userTable = "tbl_users";
 
-const createUser = async ({ mobie }) => {
+const createUser = async ({ mobile }) => {
   return db(userTable)
     .insert({
-      mobie: mobie,
+      mobile: mobile,
     })
     .then((user_id) => getUserById(user_id));
 };
@@ -27,7 +27,7 @@ const getUsers = () => {
   return db(userTable);
 };
 
-const getUserById = (user_id) => {
+const getUserById = async (user_id) => {
   return db(userTable).where("user_id", user_id).first();
 };
 

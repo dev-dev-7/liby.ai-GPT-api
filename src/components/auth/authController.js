@@ -13,12 +13,14 @@ exports.login = async (req, res) => {
   }
   let user = await authModel.getUserByMobile(req.body.mobile);
   if (!user) {
-    user = await authModel.createUser(req.body.mobile);
+    user = await authModel.createUser(req.body);
   }
   if (user) {
+    let otp = Math.floor(100000 + Math.random() * 900000);
     await authModel.updateUser(user.user_id, {
-      mobile_otp: Math.floor(100000 + Math.random() * 900000),
+      mobile_otp: otp,
     });
+    await sendMessage(req.body.mobile, otp);
     return res.status(201).json({
       data: {
         user: user,
@@ -35,7 +37,7 @@ exports.verifyOtp = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let mobile = await authModel.getUserByMobile(req.body.mobile);
   if (mobile.mobile_otp == req.body.mobile_otp) {
-    let user = await authModel.updateUser(req.body.user_id, {
+    let user = await authModel.updateUser(mobile.user_id, {
       status: 1,
       mobile_otp: Math.floor(100000 + Math.random() * 900000),
     });
@@ -48,7 +50,7 @@ exports.verifyOtp = async (req, res) => {
       token,
     });
   } else {
-    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+    return res.status(404).json({ errors: [{ msg: "Invalid otp code" }] });
   }
 };
 
@@ -57,10 +59,12 @@ exports.resendOtp = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let otp = Math.floor(100000 + Math.random() * 900000);
   let user = await authModel.updateUserByMobile(req.body.mobile, {
-    mobile_otp: Math.floor(100000 + Math.random() * 900000),
+    mobile_otp: otp,
   });
   if (user) {
+    await sendMessage(req.body.mobile, otp);
     return res.status(200).json({
       msg: "New otp has been Sent",
     });
@@ -83,6 +87,24 @@ exports.update = async (req, res) => {
       data: await authModel.getUserById(req.params.user_id),
     });
   } else {
-    return res.status(400).json({ errors: [{ msg: result }] });
+    return res.status(404).json({ errors: [{ msg: "Not Found" }] });
   }
+};
+
+exports.authorization = async (req, res) => {
+  if (req.headers && req.headers.authorization) {
+    var authorization = req.headers.authorization.split(" ")[1],
+      decoded;
+    try {
+      decoded = jwt.verify(authorization, JWT_SECRETE_KEY);
+    } catch (e) {
+      return res.status(401).send("unauthorized");
+    }
+    if (decoded?.user) {
+      return decoded?.user;
+    } else {
+      return null;
+    }
+  }
+  return res.send(500);
 };

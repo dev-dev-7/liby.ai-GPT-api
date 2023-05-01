@@ -47,7 +47,7 @@ exports.recentChats = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let user = await authModel.getUserById(req.body.user_id);
+  let user = await authController.authorization(req, res);
   let category = await chatModel.getCategoryById(req.body.category_id);
   if (user && category) {
     chats = await chatModel.getRecentChats(user.user_id, category.id);

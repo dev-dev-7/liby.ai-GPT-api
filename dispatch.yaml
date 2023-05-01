@@ -7,3 +7,7 @@ dispatch:
     service: ola
   - url: "ola-api.afkkarr.com/*"
     service: ola-api
+  - url: "liby.afkkarr.com/*"
+    service: liby
+  - url: "liby-api.afkkarr.com/*"
+    service: liby-api

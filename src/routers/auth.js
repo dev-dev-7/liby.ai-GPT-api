@@ -17,6 +17,8 @@ router.post(
   authController.subscribe
 );
 
+router.get("/user", [verifyToken], authController.getUserDetails);
+
 router.put(
   "/profile/update/:user_id",
   [validation.update, verifyToken],

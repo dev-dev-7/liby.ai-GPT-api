@@ -94,6 +94,21 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.getUserDetails = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  let user = await authorization.authorization(req, res);
+  if (user) {
+    return res.status(200).json({
+      data: await authModel.getUserById(user.user_id),
+    });
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Not Found" }] });
+  }
+};
+
 exports.subscribe = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

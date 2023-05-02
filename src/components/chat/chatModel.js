@@ -2,13 +2,20 @@ const db = require("../../config/connection");
 const tableChats = "tbl_chats";
 const chatCategories = "tbl_chat_categories";
 
-const createChat = async ({ user_id, category_id, question, answer }) => {
+const createChat = async ({
+  user_id,
+  category_id,
+  question,
+  answer,
+  likes,
+}) => {
   return db(tableChats)
     .insert({
       user_id: user_id,
       category_id: category_id,
       question: question,
       answer: answer,
+      likes: likes,
       status: 1,
     })
     .then((id) => getChatById(id));

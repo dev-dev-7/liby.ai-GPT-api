@@ -28,11 +28,11 @@ exports.createChat = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: req.body.question,
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "user", content: req.body.question }],
   });
-  if (completion.data.choices[0].text) {
+  if (completion.data.choices[0].message) {
     let user = await authorization.authorization(req, res);
     let category = await chatModel.getCategoryById(req.body.category_id);
     if (user && category) {
@@ -40,7 +40,8 @@ exports.createChat = async (req, res) => {
         user_id: user.user_id,
         category_id: category.id,
         question: req.body.question,
-        answer: completion.data.choices[0].text,
+        answer: completion.data.choices[0].message.content,
+        likes: 0,
       };
       chat = await chatModel.createChat(body);
       return res.status(201).json({

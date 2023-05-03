@@ -3,7 +3,7 @@ const router = express.Router();
 
 const auth = require("./auth");
 const file = require("./file");
-const chat = require("./chat");
+const message = require("./message");
 
 // Home Page
 router.get("/", (req, res) => {
@@ -12,6 +12,6 @@ router.get("/", (req, res) => {
 
 router.use("/", auth);
 router.use("/", file);
-router.use("/", chat);
+router.use("/", message);
 
 module.exports = router;

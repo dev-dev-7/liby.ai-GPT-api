@@ -1,5 +1,5 @@
 require("dotenv").config();
-const chatModel = require("./chatModel");
+const chatModel = require("./messageModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
@@ -23,7 +23,7 @@ exports.getCategories = async (req, res) => {
   }
 };
 
-exports.createChat = async (req, res) => {
+exports.createMessage = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -43,7 +43,7 @@ exports.createChat = async (req, res) => {
         answer: completion.data.choices[0].message.content,
         likes: 0,
       };
-      chat = await chatModel.createChat(body);
+      chat = await chatModel.getRecentMessages(body);
       return res.status(201).json({
         data: chat,
       });
@@ -57,7 +57,58 @@ exports.createChat = async (req, res) => {
   }
 };
 
-exports.recentChats = async (req, res) => {
+exports.updateMessage = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "user", content: req.body.question }],
+  });
+  if (completion.data.choices[0].message && req.params.id) {
+    let user = await authorization.authorization(req, res);
+    let category = await chatModel.getCategoryById(req.body.category_id);
+    if (user && category) {
+      var body = {
+        user_id: user.user_id,
+        category_id: category.id,
+        question: req.body.question,
+        answer: completion.data.choices[0].message.content,
+        likes: 0,
+      };
+      chat = await chatModel.updateMessage(req.params.id, body);
+      return res.status(201).json({
+        data: chat,
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ errors: [{ msg: "Error generating!!!!" }] });
+    }
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+  }
+};
+
+exports.deleteMessage = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  let user = await authorization.authorization(req, res);
+  let message = await chatModel.getMessageById(req.params.id);
+  if (message.user_id == user.user_id) {
+    chats = await chatModel.deleteMessageById(message.id);
+    return res.status(200).json({
+      msg: "Message has been succesfully deleted",
+    });
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+  }
+};
+
+exports.recentMessages = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -65,7 +116,7 @@ exports.recentChats = async (req, res) => {
   let user = await authorization.authorization(req, res);
   let category = await chatModel.getCategoryById(req.body.category_id);
   if (user && category) {
-    chats = await chatModel.getRecentChats(user.user_id, category.id);
+    chats = await chatModel.getRecentMessages(user.user_id, category.id);
     return res.status(200).json({
       data: chats,
     });

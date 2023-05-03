@@ -1,66 +1,60 @@
-const { format } = require("util");
-const { Storage } = require("@google-cloud/storage");
-const config = require("../../config/index.js");
+require("dotenv").config();
+const { BlobServiceClient, BlockBlobClient } = require("@azure/storage-blob");
+const { Readable } = require("stream");
 
-// **************************************************************
+const blobServiceClient = BlobServiceClient.fromConnectionString(
+  process.env.AZURE_CONNECTION_STRING
+);
+const containerClient = blobServiceClient.getContainerClient(
+  process.env.AZURE_CONTAINER_NAME
+);
 
-const { BUCKET_NAME, GOOGLE_CLOUD_KEY_FILE } = config.google_storage;
-
-// Instantiate a storage client with credentials
-const storage = new Storage({ keyFilename: GOOGLE_CLOUD_KEY_FILE });
-const bucket = storage.bucket(BUCKET_NAME);
-
-// **************************************************************
-
-exports.uploadMultiFiles = async (files, folder_name) => {
+exports.uploadMultiFiles = async (files) => {
   try {
-    let result = files.map((file) => {
+    let result = files.map(async (file) => {
       let file_extention = file.originalname.substring(
         file.originalname.lastIndexOf("."),
         file.originalname.length
       );
-      file.file_name = Date.now() + file_extention;
-      const { originalname, file_name } = file;
-      const blob = bucket.file(folder_name + file_name);
-      const blobStream = blob.createWriteStream({
-        metadata: {
-          contentType: file.mimetype,
-        },
-        resumable: false,
-      });
-      return new Promise(async (resolve, reject) => {
-        blobStream
-          .on("error", (err) => {
-            console.error(err);
-            reject({ message: err.message });
-          })
-          .on("finish", async (data) => {
-            try {
-              let publicUrl = "";
-              publicUrl = format(
-                `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-              );
-              await bucket.file(folder_name + file_name).makePublic();
-              resolve({
-                file_name: file_name,
-                originalname: originalname,
-                type: file?.mimetype,
-                public_url: publicUrl,
-                size: file?.size,
-              });
-            } catch (err) {
-              console.error("error : ", err);
-              reject({
-                message: err.message,
-              });
-            }
-          })
-          .end(file.buffer);
-      });
+      let blobName = Date.now() + file_extention;
+      let blobService = new BlockBlobClient(
+        process.env.AZURE_CONNECTION_STRING,
+        process.env.AZURE_CONTAINER_NAME,
+        blobName
+      );
+      let stream = Readable.from(file.buffer);
+      let streamLength = file.buffer.length;
+      return await blobService
+        .uploadStream(stream, streamLength)
+        .then(() => {
+          return {
+            file_name: blobName,
+            originalname: file.originalname,
+            type: file?.mimetype,
+            public_url:
+              "https://" +
+              process.env.AZURE_STORAGE_ACCOUNT +
+              ".blob.core.windows.net/" +
+              process.env.AZURE_CONTAINER_NAME +
+              "/" +
+              blobName,
+            size: file?.size,
+          };
+        })
+        .catch((err) => {
+          return err;
+        });
     });
     return Promise.all(result);
   } catch (err) {
     console.error("error : ", err);
     throw new Error(err.message);
+  }
+};
+
+const deleteDocumentFromAzure = async () => {
+  const response = await containerClient.deleteBlob("FILENAME-TO-DELETE");
+  if (response._response.status !== 202) {
+    throw new Error(`Error deleting ${"FILENAME-TO-DELETE"}`);
   }
 };

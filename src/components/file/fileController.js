@@ -1,22 +1,15 @@
 const fileUploadService = require("./fileService.js");
 
-// **************************************************************
-
 exports.uploadMultiFiles = async (req, res) => {
   try {
-    let folder_name = "";
     if (!req.files) {
       return res
         .status(400)
         .send({ message: "Please select at least one file!" });
     }
-    const data = await fileUploadService.uploadMultiFiles(
-      req.files,
-      folder_name
-    );
+    const data = await fileUploadService.uploadMultiFiles(req.files);
     return res.status(200).json({ success: true, data });
   } catch (err) {
-    // console.error("error : ", err);
     if (err.code === "LIMIT_UNEXPECTED_FILE") {
       return res.status(500).json({
         success: false,

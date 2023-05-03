@@ -43,7 +43,7 @@ exports.createMessage = async (req, res) => {
         answer: completion.data.choices[0].message.content,
         likes: 0,
       };
-      chat = await chatModel.getRecentMessages(body);
+      chat = await chatModel.createMessage(body);
       return res.status(201).json({
         data: chat,
       });

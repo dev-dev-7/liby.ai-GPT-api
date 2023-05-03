@@ -22,7 +22,6 @@ const createMessage = async ({
 };
 
 const getMessageById = (id) => {
-  console.log(id);
   return db(tableMessages).where("id", id).first();
 };
 

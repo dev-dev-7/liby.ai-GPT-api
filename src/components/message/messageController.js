@@ -124,3 +124,23 @@ exports.recentMessages = async (req, res) => {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
   }
 };
+
+exports.like = async (req, res) => {
+  if (req.params.id) {
+    // let user = await authorization.authorization(req, res);
+    let message = await chatModel.getMessageById(req.params.id);
+    if (message) {
+      var body = {
+        likes: message.likes + 1,
+      };
+      chat = await chatModel.updateMessage(req.params.id, body);
+      return res.status(201).json({
+        msg: "Like action has been execeuted!",
+      });
+    } else {
+      return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+    }
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+  }
+};

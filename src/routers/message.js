@@ -22,5 +22,6 @@ router.post(
   [validation.recentMessage, verifyToken],
   chatController.recentMessages
 );
+router.put("/message/like/:id", [verifyToken], chatController.like);
 
 module.exports = router;

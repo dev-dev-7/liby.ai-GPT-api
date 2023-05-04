@@ -147,6 +147,7 @@ exports.clearMessage = async (req, res) => {
     var body = {
       clear: 1,
     }
+    console.log(user.user_id)
     await chatModel.updateMessageByUserCategory(
       user.user_id,
       req.params.category_id,

@@ -23,5 +23,6 @@ router.post(
   chatController.recentMessages
 );
 router.put("/message/like/:id", [verifyToken], chatController.like);
+router.get("/message/clear/:category_id", [verifyToken], chatController.clearMessage);
 
 module.exports = router;

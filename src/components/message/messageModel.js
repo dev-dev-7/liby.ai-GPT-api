@@ -32,6 +32,13 @@ const updateMessage = async (id, data) => {
     .then((updated) => getMessageById(id));
 };
 
+const updateMessageByUserCategory = async (user_id, category_id, data) => {
+  return db(tableMessages)
+    .where("user_id", user_id)
+    .andWhere("category_id", category_id)
+    .update(data);
+};
+
 const deleteMessageById = (id) => {
   return db(tableMessages).where("id", id).del();
 };
@@ -57,6 +64,7 @@ module.exports = {
   getMessageById,
   deleteMessageById,
   updateMessage,
+  updateMessageByUserCategory,
   getCategories,
   getCategoryById,
   getRecentMessages,

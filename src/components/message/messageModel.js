@@ -47,8 +47,8 @@ const getRecentMessages = (user_id, category_id) => {
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("category_id", category_id)
-    .orderBy("id", "asc")
-    .limit(200);
+    .andWhere("clear",0)
+    .orderBy("id", "asc");
 };
 
 const getCategories = () => {

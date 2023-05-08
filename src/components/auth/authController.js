@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     user = await authModel.createUser(req.body);
   }
   if (user) {
-    let otp = Math.floor(100000 + Math.random() * 900000);
+    let otp = 111111; //  Math.floor(100000 + Math.random() * 900000);
     await authModel.updateUser(user.user_id, {
       mobile_otp: otp,
     });
@@ -60,7 +60,7 @@ exports.resendOtp = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let otp = Math.floor(100000 + Math.random() * 900000);
+  let otp = 111111; // Math.floor(100000 + Math.random() * 900000);
   let user = await authModel.updateUserByMobile(req.body.mobile, {
     mobile_otp: otp,
   });

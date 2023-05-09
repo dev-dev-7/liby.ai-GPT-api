@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     user = await authModel.createUser(req.body);
   }
   if (user) {
-    let otp = 111111; //  Math.floor(100000 + Math.random() * 900000);
+    let otp = 1111; //  Math.floor(1000 + Math.random() * 9000);
     await authModel.updateUser(user.user_id, {
       mobile_otp: otp,
     });
@@ -40,7 +40,7 @@ exports.verifyOtp = async (req, res) => {
   if (mobile.mobile_otp == req.body.mobile_otp) {
     let user = await authModel.updateUser(mobile.user_id, {
       status: 1,
-      mobile_otp: Math.floor(100000 + Math.random() * 900000),
+      mobile_otp: Math.floor(1000 + Math.random() * 9000),
     });
     const token = jwt.sign({ user: user }, JWT_SECRETE_KEY);
     return res.status(201).json({
@@ -60,7 +60,7 @@ exports.resendOtp = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let otp = 111111; // Math.floor(100000 + Math.random() * 900000);
+  let otp = 1111; // Math.floor(1000 + Math.random() * 9000);
   let user = await authModel.updateUserByMobile(req.body.mobile, {
     mobile_otp: otp,
   });

@@ -3,6 +3,7 @@ const chatModel = require("./messageModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
+const { getPostFix } = require("../../helpers/chatGptPostfix");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -28,11 +29,16 @@ exports.createMessage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let question = await getPostFix(
+    req.body.question,
+    req.body.category_id,
+    req.body.language
+  );
   let answer;
   if (req.body.category_id == 1) {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: req.body.question,
+      prompt: question,
       max_tokens: 100,
       temperature: 0,
     });
@@ -40,7 +46,7 @@ exports.createMessage = async (req, res) => {
   } else {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: req.body.question }],
+      messages: [{ role: "system", content: question }],
     });
     answer = completion.data.choices[0].message.content;
   }
@@ -51,7 +57,7 @@ exports.createMessage = async (req, res) => {
       var body = {
         user_id: user.user_id,
         category_id: category.id,
-        question: req.body.question,
+        question: question,
         answer: answer,
         likes: 0,
       };
@@ -74,10 +80,15 @@ exports.updateMessage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let question = await getPostFix(
+    req.body.question,
+    req.body.category_id,
+    req.body.language
+  );
   if (req.body.category_id == 1) {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: req.body.question,
+      prompt: question,
       max_tokens: 100,
       temperature: 0,
     });
@@ -85,7 +96,7 @@ exports.updateMessage = async (req, res) => {
   } else {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: req.body.question }],
+      messages: [{ role: "system", content: question }],
     });
     answer = completion.data.choices[0].message.content;
   }
@@ -96,7 +107,7 @@ exports.updateMessage = async (req, res) => {
       var body = {
         user_id: user.user_id,
         category_id: category.id,
-        question: req.body.question,
+        question: question,
         answer: answer,
         likes: 0,
       };

@@ -60,10 +60,11 @@ exports.createMessage = async (req, res) => {
         question: req.body.question,
         answer: answer,
         likes: 0,
+        language:req.body.language
       };
       chat = await chatModel.createMessage(body);
       return res.status(201).json({
-        data: chat,
+        data: body,
       });
     } else {
       return res
@@ -110,10 +111,11 @@ exports.updateMessage = async (req, res) => {
         question: req.body.question,
         answer: answer,
         likes: 0,
+        language:req.body.language
       };
       chat = await chatModel.updateMessage(req.params.id, body);
       return res.status(201).json({
-        data: chat,
+        data: body,
       });
     } else {
       return res

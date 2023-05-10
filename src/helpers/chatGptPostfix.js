@@ -5,11 +5,22 @@ exports.getPostFix = async (question, category_id, language = "english") => {
     case "2":
       return question + " anwer me in home work format";
     case "3":
-      return '"' + question + '"' + " translate to me in " + language;
+      return (
+        "Translate the following English text to " +
+        language +
+        ': "' +
+        question +
+        '"'
+      );
     case "4":
       return '"' + question + '"' + " answer me in research model";
     case "5":
-      return '"' + question + '"' + " expecting answer by progaming language";
+      return (
+        "Answer me in sample code syntax with short description" +
+        ': "' +
+        question +
+        '"'
+      );
     case "6":
       return '"' + question + '"' + " write to me email based on this matter";
     default:

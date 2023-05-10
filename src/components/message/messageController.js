@@ -57,7 +57,7 @@ exports.createMessage = async (req, res) => {
       var body = {
         user_id: user.user_id,
         category_id: category.id,
-        question: question,
+        question: req.body.question,
         answer: answer,
         likes: 0,
       };
@@ -107,7 +107,7 @@ exports.updateMessage = async (req, res) => {
       var body = {
         user_id: user.user_id,
         category_id: category.id,
-        question: question,
+        question: req.body.question,
         answer: answer,
         likes: 0,
       };

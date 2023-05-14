@@ -6,7 +6,7 @@ exports.getPostFix = async (question, category_id, language = "english") => {
       return question + " anwer me in home work format";
     case "3":
       return (
-        "Answer me and Translate to the following text to " +
+        "Answer Me and Translate the following result to " +
         language +
         ': "' +
         question +

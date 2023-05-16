@@ -22,6 +22,6 @@ router.post(
   chatController.recentImages
 );
 router.put("/image/like/:id", [verifyToken], chatController.like);
-router.get("/image/clear/:category_id", [verifyToken], chatController.clearImage);
+router.get("/images/clear/:category_id", [verifyToken], chatController.clearImages);
 
 module.exports = router;

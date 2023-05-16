@@ -131,7 +131,7 @@ exports.like = async (req, res) => {
   }
 }
 
-exports.clearImage= async (req, res) => {
+exports.clearImages= async (req, res) => {
   let user = await authorization.authorization(req, res)
   if (user) {
     var body = {

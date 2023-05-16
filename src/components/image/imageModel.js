@@ -33,7 +33,6 @@ const updateImage = async (id, data) => {
 const updateImageByUserCategory = async (user_id, data) => {
   return db(tableMessages)
     .where("user_id", user_id)
-    .andWhere("category_id", category_id)
     .andWhere("type", "image")
     .update(data);
 };

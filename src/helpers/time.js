@@ -37,4 +37,20 @@ function addSeconds(date, seconds) {
   return date;
 }
 
-module.exports = { timeNow };
+const getDate = () => {
+  var today = new Date();
+  var year = today.getFullYear();
+  var month = today.getMonth() + 1;
+  var date = today.getDate();
+  return year + "-" + month + "-" + date;
+};
+
+const convertToDate = (created_date) => {
+  let date_ob = new Date(created_date);
+  let year = date_ob.getFullYear();
+  let month = date_ob.getMonth() + 1;
+  let date = date_ob.getDate();
+  return year + "-" + month + "-" + date;
+};
+
+module.exports = { timeNow, getDate, convertToDate };

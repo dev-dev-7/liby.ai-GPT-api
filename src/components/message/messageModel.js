@@ -25,6 +25,14 @@ const getMessageById = (id) => {
   return db(tableMessages).where("id", id).first();
 };
 
+const getLastMessageByCategory = (user_id, category_id) => {
+  return db(tableMessages)
+    .where("user_id", user_id)
+    .andWhere("category_id", category_id)
+    .orderBy("id", "desc")
+    .first();
+};
+
 const updateMessage = async (id, data) => {
   return db(tableMessages)
     .where("id", id)
@@ -47,7 +55,7 @@ const getRecentMessages = (user_id, category_id) => {
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("category_id", category_id)
-    .andWhere("clear",0)
+    .andWhere("clear", 0)
     .orderBy("id", "desc");
 };
 
@@ -67,5 +75,6 @@ module.exports = {
   updateMessageByUserCategory,
   getCategories,
   getCategoryById,
+  getLastMessageByCategory,
   getRecentMessages,
 };

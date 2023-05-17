@@ -4,6 +4,7 @@ const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
 const { getPostFix } = require("../../helpers/chatGptPostfix");
+const { getDate, convertToDate } = require("../../helpers/time");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -29,27 +30,35 @@ exports.createMessage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let user = await authorization.authorization(req, res);
   let question = await getPostFix(
     req.body.question,
     req.body.category_id,
     req.body.language
   );
   let answer;
+  let messages = [{ role: "user", content: question }];
   if (req.body.category_id == 1) {
+    let lastMessage = await chatModel.getLastMessageByCategory(
+      user.user_id,
+      req.body.category_id
+    );
+    if (lastMessage && convertToDate(lastMessage.created_at) === getDate()) {
+      messages.push({ role: "assistant", content: lastMessage.answer });
+    }
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: question }],
+      messages: messages,
     });
     answer = completion.data.choices[0].message.content;
   } else {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: question }],
+      messages: messages,
     });
     answer = completion.data.choices[0].message.content;
   }
   if (answer) {
-    let user = await authorization.authorization(req, res);
     let category = await chatModel.getCategoryById(req.body.category_id);
     if (user && category) {
       var body = {
@@ -78,26 +87,19 @@ exports.updateMessage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let user = await authorization.authorization(req, res);
   let question = await getPostFix(
     req.body.question,
     req.body.category_id,
     req.body.language
   );
-  if (req.body.category_id == 1) {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: question }],
-    });
-    answer = completion.data.choices[0].message.content;
-  } else {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: question }],
-    });
-    answer = completion.data.choices[0].message.content;
-  }
+  let messages = [{ role: "user", content: question }];
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: messages,
+  });
+  answer = completion.data.choices[0].message.content;
   if (answer && req.params.id) {
-    let user = await authorization.authorization(req, res);
     let category = await chatModel.getCategoryById(req.body.category_id);
     if (user && category) {
       var body = {

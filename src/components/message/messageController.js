@@ -43,6 +43,7 @@ exports.createMessage = async (req, res) => {
       user.user_id,
       req.body.category_id
     );
+    console.log(lastMessage.answer);
     if (lastMessage && convertToDate(lastMessage.created_at) === getDate()) {
       messages.push({ role: "assistant", content: lastMessage.answer });
     }

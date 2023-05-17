@@ -36,13 +36,11 @@ exports.createMessage = async (req, res) => {
   );
   let answer;
   if (req.body.category_id == 1) {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: question,
-      max_tokens: 100,
-      temperature: 0,
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "system", content: question }],
     });
-    answer = completion.data.choices[0].text;
+    answer = completion.data.choices[0].message.content;
   } else {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -86,13 +84,11 @@ exports.updateMessage = async (req, res) => {
     req.body.language
   );
   if (req.body.category_id == 1) {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: question,
-      max_tokens: 100,
-      temperature: 0,
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "system", content: question }],
     });
-    answer = completion.data.choices[0].text;
+    answer = completion.data.choices[0].message.content;
   } else {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",

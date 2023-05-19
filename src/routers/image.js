@@ -16,12 +16,12 @@ router.put(
   chatController.updateImage
 );
 router.delete("/image/:id", [verifyToken], chatController.deleteImage);
-router.post(
-  "/get-images",
-  [verifyToken],
-  chatController.recentImages
-);
+router.post("/get-images", [verifyToken], chatController.recentImages);
 router.put("/image/like/:id", [verifyToken], chatController.like);
-router.get("/images/clear/:category_id", [verifyToken], chatController.clearImages);
+router.get(
+  "/images/clear/:category_id",
+  [verifyToken],
+  chatController.clearImages
+);
 
 module.exports = router;

@@ -15,6 +15,7 @@ const createAudio = async ({ user_id, question, answer, likes }) => {
 };
 
 const getAudioById = (id) => {
+  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 

@@ -4,7 +4,7 @@ const path = require('path');
 
 exports.download = async (uri, filename, callback) => {
   request.head(uri, async function (err, res, body) {
-    request(uri).pipe(fs.createWriteStream(filename,{ mode: 0o755 })).on("close", callback);
+    request(uri).pipe(fs.createWriteStream(filename)).on("close", callback);
   });
 };
 

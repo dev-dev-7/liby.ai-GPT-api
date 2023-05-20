@@ -17,6 +17,7 @@ router.put(
 );
 router.delete("/audio/:id", [verifyToken], audioController.deleteAudio);
 router.post("/get-audios", [verifyToken], audioController.recentAudios);
+router.get("/audio/explore/:page", [verifyToken], audioController.explore);
 router.put("/audio/like/:id", [verifyToken], audioController.like);
 router.get(
   "/audios/clear/:category_id",

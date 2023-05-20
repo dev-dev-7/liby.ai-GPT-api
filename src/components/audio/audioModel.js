@@ -11,11 +11,10 @@ const createAudio = async ({ user_id, question, answer, likes }) => {
       likes: likes,
       status: 1,
     })
-    .then((id) => getAudioById(id));
+    .then((id) => getAudioById(id[0]?id[0]:id));
 };
 
 const getAudioById = (id) => {
-  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 
@@ -45,6 +44,13 @@ const getRecentAudios = (user_id) => {
     .orderBy("id", "desc");
 };
 
+const getAllImages = (page="") => {
+  return db(tableMessages)
+    .where("clear",0)
+    .andWhere("type","audio")
+    .orderBy("id", "desc");
+};
+
 module.exports = {
   createAudio,
   getAudioById,
@@ -52,4 +58,5 @@ module.exports = {
   updateAudio,
   updateAudioByUserCategory,
   getRecentAudios,
+  getAllImages
 };

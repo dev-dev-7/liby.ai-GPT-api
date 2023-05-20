@@ -19,11 +19,10 @@ const createMessage = async ({
       likes: likes,
       status: 1,
     })
-    .then((id) => getMessageById(id));
+    .then((id) => getMessageById(id[0]?id[0]:id));
 };
 
 const getMessageById = (id) => {
-  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 

@@ -182,6 +182,22 @@ exports.recentImages = async (req, res) => {
   }
 };
 
+exports.explore = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  let user = await authorization.authorization(req, res);
+  if (user) {
+    let images = await imageModel.getAllImages(req.params.page);
+    return res.status(200).json({
+      data: images,
+    });
+  } else {
+    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
+  }
+};
+
 exports.like = async (req, res) => {
   if (req.params.id) {
     // let user = await authorization.authorization(req, res);

@@ -10,7 +10,6 @@ exports.download = async (uri, filename, callback) => {
 
 exports.deleteFile = async (filename) => {
   let fileNameWithPath =path.resolve(__dirname, filename);
-  console.log("fileNameWithPath: ", fileNameWithPath)
   fs.unlink(fileNameWithPath, function(err) {
       if(err && err.code == 'ENOENT') {
           console.info("File doesn't exist");

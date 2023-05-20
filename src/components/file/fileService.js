@@ -52,6 +52,31 @@ exports.uploadMultiFiles = async (files) => {
   }
 };
 
+exports.createBlobFromReadStream = async (blobName, readableStream) => {
+  // Create blob client from container client
+  const blockBlobClient = await containerClient.getBlockBlobClient(blobName);
+  // Size of every buffer allocated, also
+  // the block size in the uploaded block blob.
+  // Default value is 8MB
+  const bufferSize = 4 * 1024 * 1024;
+  // Max concurrency indicates the max number of
+  // buffers that can be allocated, positive correlation
+  // with max uploading concurrency. Default value is 5
+  const maxConcurrency = 20;
+  // use transform per chunk - only to see chunck
+  // const transformedReadableStream = readableStream.pipe(myTransform);
+  // Upload stream
+  await blockBlobClient.uploadStream(
+    readableStream,
+    bufferSize,
+    maxConcurrency
+  );
+  // do something with blob
+  // const getTagsResponse = await blockBlobClient.getTags();
+  // console.log(`tags for ${blobName} = ${JSON.stringify(getTagsResponse.tags)}`);
+  return "https://"+process.env.AZURE_STORAGE_ACCOUNT+".blob.core.windows.net/"+process.env.AZURE_CONTAINER_NAME+"/"+blobName
+};
+
 const deleteDocumentFromAzure = async () => {
   const response = await containerClient.deleteBlob("FILENAME-TO-DELETE");
   if (response._response.status !== 202) {

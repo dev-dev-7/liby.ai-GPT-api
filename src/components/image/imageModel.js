@@ -16,11 +16,10 @@ const createImage = async ({
       likes: likes,
       status: 1,
     })
-    .then((id) => getImageById(id));
+    .then((id) => getImageById(id[0]?id[0]:id));
 };
 
 const getImageById = (id) => {
-  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 
@@ -50,6 +49,13 @@ const getRecentImages = (user_id) => {
     .orderBy("id", "desc");
 };
 
+const getAllImages = (page="") => {
+  return db(tableMessages)
+    .where("clear",0)
+    .andWhere("type","image")
+    .orderBy("id", "desc");
+};
+
 module.exports = {
   createImage,
   getImageById,
@@ -57,4 +63,5 @@ module.exports = {
   updateImage,
   updateImageByUserCategory,
   getRecentImages,
+  getAllImages
 };

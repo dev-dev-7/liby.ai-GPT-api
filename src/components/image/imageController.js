@@ -3,6 +3,9 @@ const imageModel = require("./imageModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
+const fs = require("fs");
+const { download, deleteFile } = require("../../../downloadUrl");
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -13,44 +16,68 @@ exports.createImage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let user = await authorization.authorization(req, res);
   let question = req.body.question;
-  let answer;
-  let completion;
   if (req.body.type == "variation") {
-    completion = await openai.createImage({
-      prompt: question,
-      n: 1,
-      size: "1024x1024",
+    let fileName = question.substring(
+      question.lastIndexOf("/") + 1,
+      question.length
+    );
+    await download(question, fileName, async function () {
+      let stream = fs.createReadStream(fileName);
+      let result = await openai.createImageVariation(stream, 1, "1024x1024");
+      let variation = result.data.data[0].url;
+      if (variation) {
+        await deleteFile(fileName);
+        if (user) {
+          var body = {
+            user_id: user.user_id,
+            question: question,
+            answer: variation,
+            likes: 0,
+          };
+          chat = await imageModel.createImage(body);
+          chat.language = req.body.language;
+          return res.status(201).json({
+            data: chat,
+          });
+        } else {
+          return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
+        }
+      } else {
+        return res
+          .status(404)
+          .json({ errors: [{ msg: "Error generating!!!!" }] });
+      }
     });
   } else {
-    completion = await openai.createImage({
+    let completion = await openai.createImage({
       prompt: question,
       n: 1,
       size: "1024x1024",
     });
-  }
-  answer = completion.data.data[0].url;
-  if (answer) {
-    let user = await authorization.authorization(req, res);
-    if (user) {
-      var body = {
-        user_id: user.user_id,
-        question: req.body.question,
-        answer: answer,
-        likes: 0,
-      };
-      chat = await imageModel.createImage(body);
-      chat.language = req.body.language;
-      return res.status(201).json({
-        data: chat,
-      });
+    let answer = completion.data.data[0].url;
+    if (answer) {
+      if (user) {
+        var body = {
+          user_id: user.user_id,
+          question: req.body.question,
+          answer: answer,
+          likes: 0,
+        };
+        chat = await imageModel.createImage(body);
+        chat.language = req.body.language;
+        return res.status(201).json({
+          data: chat,
+        });
+      } else {
+        return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
+      }
     } else {
       return res
         .status(404)
         .json({ errors: [{ msg: "Error generating!!!!" }] });
     }
-  } else {
-    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
   }
 };
 
@@ -59,35 +86,66 @@ exports.updateImage = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let user = await authorization.authorization(req, res);
   let question = await req.body.question;
-  let answer;
-  const completion = await openai.createImage({
-    prompt: question,
-    n: 1,
-    size: "1024x1024",
-  });
-  answer = completion.data.data[0].url;
-  if (answer) {
-    let user = await authorization.authorization(req, res);
-    if (user) {
-      var body = {
-        user_id: user.user_id,
-        question: req.body.question,
-        answer: answer,
-        likes: 0,
-      };
-      chat = await imageModel.updateImage(req.params.id, body);
-      chat.language = req.body.language;
-      return res.status(201).json({
-        data: chat,
-      });
+  if (req.body.type == "variation") {
+    let fileName = question.substring(
+      question.lastIndexOf("/") + 1,
+      question.length
+    );
+    await download(question, fileName, async function () {
+      let stream = fs.createReadStream(fileName);
+      let result = await openai.createImageVariation(stream, 1, "1024x1024");
+      let variation = result.data.data[0].url;
+      if (variation) {
+        if (user) {
+          var body = {
+            user_id: user.user_id,
+            question: req.body.question,
+            answer: variation,
+            likes: 0,
+          };
+          chat = await imageModel.updateImage(req.params.id, body);
+          return res.status(201).json({
+            data: chat,
+          });
+        } else {
+          return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
+        }
+      } else {
+        return res
+          .status(404)
+          .json({ errors: [{ msg: "Error generating!!!!" }] });
+      }
+    });
+  } else {
+    let completion = await openai.createImage({
+      prompt: question,
+      n: 1,
+      size: "1024x1024",
+    });
+    let answer = completion.data.data[0].url;
+    if (answer) {
+      if (user) {
+        var body = {
+          user_id: user.user_id,
+          question: req.body.question,
+          answer: answer,
+          likes: 0,
+        };
+        chat = await imageModel.updateImage(req.params.id, body);
+        chat.language = req.body.language;
+        return res.status(201).json({
+          data: chat,
+        });
+      } else {
+        return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
+      }
     } else {
       return res
         .status(404)
         .json({ errors: [{ msg: "Error generating!!!!" }] });
     }
-  } else {
-    return res.status(404).json({ errors: [{ msg: "Invalid request" }] });
   }
 };
 

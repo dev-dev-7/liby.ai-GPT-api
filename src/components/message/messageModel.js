@@ -13,6 +13,7 @@ const createMessage = async ({
     .insert({
       user_id: user_id,
       category_id: category_id,
+      type: "message",
       question: question,
       answer: answer,
       likes: likes,
@@ -22,6 +23,7 @@ const createMessage = async ({
 };
 
 const getMessageById = (id) => {
+  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 

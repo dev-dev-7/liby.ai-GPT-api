@@ -20,6 +20,7 @@ const createImage = async ({
 };
 
 const getImageById = (id) => {
+  id = id[0] ? id[0] : id;
   return db(tableMessages).where("id", id).first();
 };
 

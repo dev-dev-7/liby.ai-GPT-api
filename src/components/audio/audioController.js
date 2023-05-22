@@ -10,7 +10,9 @@ const openai = new OpenAIApi(configuration);
 const gTTS = require("gtts");
 const fs = require("fs");
 const { makeid } = require("../../helpers/common");
-const { createBlobFromReadStream } = require("../../components/file/fileService");
+const {
+  createBlobFromReadStream,
+} = require("../../components/file/fileService");
 const { deleteFile } = require("../../../downloadUrl");
 
 exports.createAudio = async (req, res) => {
@@ -20,17 +22,18 @@ exports.createAudio = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   let question = req.body.question;
-  const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: question }],
-  });
-  answer = completion.data.choices[0].message.content;
+  // const completion = await openai.createChatCompletion({
+  //   model: "gpt-3.5-turbo",
+  //   messages: [{ role: "user", content: question }],
+  // });
+  // answer = completion.data.choices[0].message.content;
+  answer = question;
   if (answer && user) {
     let fileName = (await makeid(10)) + ".mp3";
-    const gtts = new gTTS(answer, "en");
+    const gtts = new gTTS(answer, req.body.language ? req.body.language : "ar");
     gtts.save(fileName, async function (err) {
       let stream = fs.createReadStream(fileName);
-      let answer = await createBlobFromReadStream(fileName,stream);
+      let answer = await createBlobFromReadStream(fileName, stream);
       if (err) {
         throw new Error(err);
       }
@@ -58,17 +61,18 @@ exports.updateAudio = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   let question = req.body.question;
-  const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: question }],
-  });
-  answer = completion.data.choices[0].message.content;
+  // const completion = await openai.createChatCompletion({
+  //   model: "gpt-3.5-turbo",
+  //   messages: [{ role: "user", content: question }],
+  // });
+  // answer = completion.data.choices[0].message.content;
+  answer = question;
   if (answer && user) {
     let fileName = (await makeid(10)) + ".mp3";
     const gtts = new gTTS(answer, "en");
     gtts.save(fileName, async function (err) {
       let stream = fs.createReadStream(fileName);
-      let answer = await createBlobFromReadStream(fileName,stream);
+      let answer = await createBlobFromReadStream(fileName, stream);
       if (err) {
         throw new Error(err);
       }

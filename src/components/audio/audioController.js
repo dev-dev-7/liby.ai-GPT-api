@@ -69,7 +69,7 @@ exports.updateAudio = async (req, res) => {
   answer = question;
   if (answer && user) {
     let fileName = (await makeid(10)) + ".mp3";
-    const gtts = new gTTS(answer, "en");
+    const gtts = new gTTS(answer, req.body.language ? req.body.language : "ar");
     gtts.save(fileName, async function (err) {
       let stream = fs.createReadStream(fileName);
       let answer = await createBlobFromReadStream(fileName, stream);

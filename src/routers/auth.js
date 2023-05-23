@@ -25,4 +25,6 @@ router.put(
   authController.update
 );
 
+router.get("/plans", [verifyToken], authController.getPlan);
+
 module.exports = router;

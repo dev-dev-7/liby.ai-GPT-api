@@ -20,11 +20,12 @@ exports.createAudio = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   let question = req.body.question;
-  const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: question }],
-  });
-  answer = completion.data.choices[0].message.content;
+  // const completion = await openai.createChatCompletion({
+  //   model: "gpt-3.5-turbo",
+  //   messages: [{ role: "user", content: question }],
+  // });
+  // answer = completion.data.choices[0].message.content;
+  answer = question;
   if (answer && user) {
     let fileName = (await makeid(10)) + ".mp3";
     const gtts = new gTTS(answer, "en");
@@ -58,11 +59,12 @@ exports.updateAudio = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   let question = req.body.question;
-  const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: question }],
-  });
-  answer = completion.data.choices[0].message.content;
+  // const completion = await openai.createChatCompletion({
+  //   model: "gpt-3.5-turbo",
+  //   messages: [{ role: "user", content: question }],
+  // });
+  // answer = completion.data.choices[0].message.content;
+  answer = question;
   if (answer && user) {
     let fileName = (await makeid(10)) + ".mp3";
     const gtts = new gTTS(answer, "en");

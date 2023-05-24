@@ -34,6 +34,7 @@ exports.createMessage = async (req, res) => {
   let question = await getPostFix(
     req.body.question,
     req.body.category_id,
+    req.body.translate,
     req.body.language
   );
   let answer;
@@ -86,6 +87,7 @@ exports.updateMessage = async (req, res) => {
   let question = await getPostFix(
     req.body.question,
     req.body.category_id,
+    req.body.translate,
     req.body.language
   );
   let messages = [{ role: "user", content: question }];

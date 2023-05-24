@@ -1,13 +1,26 @@
-exports.getPostFix = async (question, category_id, language = "english") => {
+exports.getPostFix = async (
+  question,
+  category_id,
+  translate = "English",
+  language = "ar"
+) => {
+  language = language == "ar" ? "Arabic" : "English";
   switch (category_id) {
     case "1":
-      return question;
+      return (
+        question +
+        "Answer me the following question in " +
+        language +
+        ': "' +
+        question +
+        '"'
+      );
     case "2":
       return question + " anwer me in home work format";
     case "3":
       return (
         "Translate the following English text to " +
-        language +
+        translate +
         ': "' +
         question +
         '"'

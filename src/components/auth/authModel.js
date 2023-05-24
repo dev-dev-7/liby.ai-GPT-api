@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
 const userTable = "tbl_users";
+const planTable = "tbl_plans";
 
 const createUser = async ({ mobile }) => {
   return db(userTable)
@@ -27,8 +28,8 @@ const getUsers = () => {
   return db(userTable);
 };
 
-const getUserById = async (user_id) => {
-  return db(userTable).where("user_id", user_id).first();
+const getPlans = async () => {
+  return db(planTable).where("status", 1);
 };
 
 const getUserByEmail = (email) => {
@@ -43,6 +44,10 @@ const deleteUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).del();
 };
 
+const getUserById = async (user_id) => {
+  return db(userTable).where("user_id", user_id).first();
+};
+
 module.exports = {
   createUser,
   updateUser,
@@ -52,4 +57,5 @@ module.exports = {
   getUserByEmail,
   getUserByMobile,
   deleteUserById,
+  getPlans
 };

@@ -62,6 +62,7 @@ exports.createMessage = async (req, res) => {
         question: req.body.question,
         answer: answer,
         likes: 0,
+        translate: req.body.translate,
       };
       chat = await chatModel.createMessage(body);
       chat.language = req.body.language;

@@ -8,6 +8,7 @@ const createMessage = async ({
   question,
   answer,
   likes,
+  translate,
 }) => {
   return db(tableMessages)
     .insert({
@@ -18,8 +19,9 @@ const createMessage = async ({
       answer: answer,
       likes: likes,
       status: 1,
+      translate: translate,
     })
-    .then((id) => getMessageById(id[0]?id[0]:id));
+    .then((id) => getMessageById(id[0] ? id[0] : id));
 };
 
 const getMessageById = (id) => {

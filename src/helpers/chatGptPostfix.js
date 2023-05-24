@@ -9,9 +9,9 @@ exports.getPostFix = async (
     case "1":
       return (
         question +
-        "Answer me the following question in " +
+        "Answer me the following text in " +
         language +
-        ': "' +
+        ' language: "' +
         question +
         '"'
       );

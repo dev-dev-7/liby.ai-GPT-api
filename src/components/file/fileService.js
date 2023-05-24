@@ -12,11 +12,11 @@ const containerClient = blobServiceClient.getContainerClient(
 exports.uploadMultiFiles = async (files) => {
   try {
     let result = files.map(async (file) => {
-      let file_extention = file.originalname.substring(
-        file.originalname.lastIndexOf("."),
-        file.originalname.length
-      );
-      let blobName = Date.now() + file_extention;
+      // let file_extention = file.originalname.substring(
+      //   file.originalname.lastIndexOf("."),
+      //   file.originalname.length
+      // );
+      let blobName = Date.now() + ".png";
       let blobService = new BlockBlobClient(
         process.env.AZURE_CONNECTION_STRING,
         process.env.AZURE_CONTAINER_NAME,
@@ -74,7 +74,14 @@ exports.createBlobFromReadStream = async (blobName, readableStream) => {
   // do something with blob
   // const getTagsResponse = await blockBlobClient.getTags();
   // console.log(`tags for ${blobName} = ${JSON.stringify(getTagsResponse.tags)}`);
-  return "https://"+process.env.AZURE_STORAGE_ACCOUNT+".blob.core.windows.net/"+process.env.AZURE_CONTAINER_NAME+"/"+blobName
+  return (
+    "https://" +
+    process.env.AZURE_STORAGE_ACCOUNT +
+    ".blob.core.windows.net/" +
+    process.env.AZURE_CONTAINER_NAME +
+    "/" +
+    blobName
+  );
 };
 
 const deleteDocumentFromAzure = async () => {

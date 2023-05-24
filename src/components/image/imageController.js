@@ -27,8 +27,9 @@ exports.createImage = async (req, res) => {
       question.length
     );
     await download(question, fileName, async function () {
+      console.log(fileName);
       let stream = fs.createReadStream(fileName);
-      let result = await openai.createImageVariation(stream, 1, "1024x1024");
+      let result = await openai.createImageVariation(stream, 2, "1024x1024");
       let variation = result.data.data[0].url;
       if (variation) {
         await deleteFile(fileName);

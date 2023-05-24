@@ -162,7 +162,7 @@ exports.like = async (req, res) => {
     let message = await chatModel.getMessageById(req.params.id);
     if (message) {
       var body = {
-        likes: message.likes ? 0 : 1,
+        likes: message.likes > 0 ? 0 : 1,
       };
       chat = await chatModel.updateMessage(req.params.id, body);
       return res.status(201).json({

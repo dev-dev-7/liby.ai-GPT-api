@@ -192,6 +192,8 @@ exports.explore = async (req, res) => {
     let images = await imageModel.getAllImages(req.params.page);
     return res.status(200).json({
       data: images,
+      prevPage: req.params.page > 1 ? true : false,
+      nextPage: images.length > 39 ? true : false,
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

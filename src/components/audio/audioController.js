@@ -136,6 +136,8 @@ exports.explore = async (req, res) => {
     let audios = await audioModel.getAllImages(req.params.page);
     return res.status(200).json({
       data: audios,
+      prevPage: req.params.page > 1 ? true : false,
+      nextPage: audios.length > 39 ? true : false,
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

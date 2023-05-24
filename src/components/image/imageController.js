@@ -122,27 +122,49 @@ exports.updateImage = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   let user = await authorization.authorization(req, res);
-  let question = await req.body.question;
+  let question = req.body.question;
   if (req.body.type == "variation") {
     let fileName = question.substring(
       question.lastIndexOf("/") + 1,
       question.length
     );
     await download(question, fileName, async function () {
+      console.log(fileName);
       let stream = fs.createReadStream(fileName);
-      let result = await openai.createImageVariation(stream, 1, "1024x1024");
+      let result = await openai.createImageVariation(stream, 2, "1024x1024");
       let variation = result.data.data[0].url;
       if (variation) {
+        await deleteFile(fileName);
+        // Upload to ishrostorage
         if (user) {
-          var body = {
-            user_id: user.user_id,
-            question: req.body.question,
-            answer: variation,
-            likes: 0,
-          };
-          chat = await imageModel.updateImage(req.params.id, body);
-          return res.status(201).json({
-            data: chat,
+          let fileName = Date.now() + ".png";
+          await download(variation, fileName, async function () {
+            let stream = fs.createReadStream(fileName);
+            let answer = await createBlobFromReadStream(fileName, stream);
+            if (answer) {
+              await deleteFile(fileName);
+              if (user) {
+                var body = {
+                  user_id: user.user_id,
+                  question: question,
+                  answer: answer,
+                  likes: 0,
+                };
+                chat = await imageModel.updateImage(req.params.id, body);
+                chat.language = req.body.language;
+                return res.status(201).json({
+                  data: chat,
+                });
+              } else {
+                return res
+                  .status(401)
+                  .json({ errors: [{ msg: "Unauthorized" }] });
+              }
+            } else {
+              return res
+                .status(404)
+                .json({ errors: [{ msg: "Error generating!!!!" }] });
+            }
           });
         } else {
           return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
@@ -161,21 +183,33 @@ exports.updateImage = async (req, res) => {
     });
     let answer = completion.data.data[0].url;
     if (answer) {
-      if (user) {
-        var body = {
-          user_id: user.user_id,
-          question: req.body.question,
-          answer: answer,
-          likes: 0,
-        };
-        chat = await imageModel.updateImage(req.params.id, body);
-        chat.language = req.body.language;
-        return res.status(201).json({
-          data: chat,
-        });
-      } else {
-        return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
-      }
+      let fileName = Date.now() + ".png";
+      await download(answer, fileName, async function () {
+        let stream = fs.createReadStream(fileName);
+        let answer = await createBlobFromReadStream(fileName, stream);
+        if (answer) {
+          await deleteFile(fileName);
+          if (user) {
+            var body = {
+              user_id: user.user_id,
+              question: question,
+              answer: answer,
+              likes: 0,
+            };
+            chat = await imageModel.updateImage(req.params.id, body);
+            chat.language = req.body.language;
+            return res.status(201).json({
+              data: chat,
+            });
+          } else {
+            return res.status(401).json({ errors: [{ msg: "Unauthorized" }] });
+          }
+        } else {
+          return res
+            .status(404)
+            .json({ errors: [{ msg: "Error generating!!!!" }] });
+        }
+      });
     } else {
       return res
         .status(404)

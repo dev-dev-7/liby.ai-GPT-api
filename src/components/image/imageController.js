@@ -262,7 +262,7 @@ exports.explore = async (req, res) => {
     return res.status(200).json({
       data: images,
       prevPage: req.params.page > 1 ? true : false,
-      nextPage: images.length > 39 ? true : false,
+      nextPage: images.length > 9 ? true : false,
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

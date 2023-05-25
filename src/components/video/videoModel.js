@@ -46,7 +46,7 @@ const getRecentVideos = (user_id) => {
 };
 
 const getAllVideos = async (page = "") => {
-  const pagination = await common.getPagination(page, 40);
+  const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("clear", 0)
     .andWhere("type", "video")

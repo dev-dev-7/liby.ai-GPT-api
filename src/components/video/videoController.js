@@ -193,7 +193,7 @@ exports.explore = async (req, res) => {
     let totalVideos = await videoModel.getAllVideos();
     return res.status(200).json({
       data: images,
-      currentPage: req.params.page,
+      currentPage: Math.round(req.params.page),
       prevPage: req.params.page > 1 ? true : false,
       nextPage: images.length > 9 ? true : false,
       totalPages: Math.round(totalVideos.length / 10),

@@ -137,7 +137,7 @@ exports.explore = async (req, res) => {
     let totalAudios = await audioModel.getAllAudios();
     return res.status(200).json({
       data: audios,
-      currentPage: req.params.page,
+      currentPage: Math.round(req.params.page),
       prevPage: req.params.page > 1 ? true : false,
       nextPage: audios.length > 9 ? true : false,
       totalPages: Math.round(totalAudios.length / 10),

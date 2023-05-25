@@ -133,11 +133,14 @@ exports.explore = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   if (user) {
-    let audios = await audioModel.getAllImages(req.params.page);
+    let audios = await audioModel.getAudios(req.params.page);
+    let totalAudios = await audioModel.getAllAudios();
     return res.status(200).json({
       data: audios,
+      currentPage: req.params.page,
       prevPage: req.params.page > 1 ? true : false,
       nextPage: audios.length > 9 ? true : false,
+      totalPages: Math.round(totalAudios.length / 10),
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

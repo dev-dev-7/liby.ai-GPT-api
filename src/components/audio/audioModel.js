@@ -45,7 +45,7 @@ const getRecentAudios = (user_id) => {
     .orderBy("id", "desc");
 };
 
-const getAllImages = async (page = "1") => {
+const getAudios = async (page = "1") => {
   const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("clear", 0)
@@ -55,6 +55,10 @@ const getAllImages = async (page = "1") => {
     .offset(pagination.offset);
 };
 
+const getAllAudios = async () => {
+  return db(tableMessages).where("clear", 0).andWhere("type", "audio");
+};
+
 module.exports = {
   createAudio,
   getAudioById,
@@ -62,5 +66,6 @@ module.exports = {
   updateAudio,
   updateAudioByUserCategory,
   getRecentAudios,
-  getAllImages,
+  getAudios,
+  getAllAudios,
 };

@@ -45,7 +45,7 @@ const getRecentImages = (user_id) => {
     .orderBy("id", "desc");
 };
 
-const getAllImages = async (page = "") => {
+const getImages = async (page = "") => {
   const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("clear", 0)
@@ -55,6 +55,10 @@ const getAllImages = async (page = "") => {
     .offset(pagination.offset);
 };
 
+const getAllImages = async () => {
+  return db(tableMessages).where("clear", 0).andWhere("type", "image");
+};
+
 module.exports = {
   createImage,
   getImageById,
@@ -62,5 +66,6 @@ module.exports = {
   updateImage,
   updateImageByUserCategory,
   getRecentImages,
+  getImages,
   getAllImages,
 };

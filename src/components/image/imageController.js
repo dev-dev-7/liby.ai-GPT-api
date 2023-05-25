@@ -258,11 +258,14 @@ exports.explore = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   if (user) {
-    let images = await imageModel.getAllImages(req.params.page);
+    let images = await imageModel.getImages(req.params.page);
+    let totalImages = await imageModel.getAllImages();
     return res.status(200).json({
       data: images,
+      currentPage: req.params.page,
       prevPage: req.params.page > 1 ? true : false,
       nextPage: images.length > 9 ? true : false,
+      totalPages: Math.round(totalImages.length / 10),
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

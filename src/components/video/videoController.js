@@ -190,10 +190,13 @@ exports.explore = async (req, res) => {
   let user = await authorization.authorization(req, res);
   if (user) {
     let images = await videoModel.getAllVideos(req.params.page);
+    let totalVideos = await videoModel.getAllVideos();
     return res.status(200).json({
       data: images,
+      currentPage: req.params.page,
       prevPage: req.params.page > 1 ? true : false,
       nextPage: images.length > 9 ? true : false,
+      totalPages: Math.round(totalVideos.length / 10),
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

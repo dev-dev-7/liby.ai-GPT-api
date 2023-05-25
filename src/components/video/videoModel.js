@@ -45,7 +45,7 @@ const getRecentVideos = (user_id) => {
     .orderBy("id", "desc");
 };
 
-const getAllVideos = async (page = "") => {
+const getVideos = async (page = "") => {
   const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("clear", 0)
@@ -55,6 +55,10 @@ const getAllVideos = async (page = "") => {
     .offset(pagination.offset);
 };
 
+const getAllVideos = async () => {
+  return db(tableMessages).where("clear", 0).andWhere("type", "video");
+};
+
 module.exports = {
   createVideo,
   getVideoById,
@@ -62,5 +66,6 @@ module.exports = {
   updateVideo,
   updateVideoByUserCategory,
   getRecentVideos,
+  getVideos,
   getAllVideos,
 };

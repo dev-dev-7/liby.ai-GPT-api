@@ -37,12 +37,23 @@ const deleteAudioById = (id) => {
   return db(tableMessages).where("id", id).del();
 };
 
-const getRecentAudios = (user_id) => {
+const getRecentAudios = async (user_id, page = "") => {
+  const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("clear", 0)
     .andWhere("type", "audio")
-    .orderBy("id", "desc");
+    .orderBy("id", "desc").limit(pagination.limit)
+    .offset(pagination.offset);
+};
+
+const getAllRecentAudios = (user_id) => {
+  return db(tableMessages)
+    .count("id as total")
+    .where("user_id", user_id)
+    .andWhere("type", "audio")
+    .andWhere("clear", 0)
+    .first();
 };
 
 const getAudios = async (page = "1") => {
@@ -56,7 +67,11 @@ const getAudios = async (page = "1") => {
 };
 
 const getAllAudios = async () => {
-  return db(tableMessages).where("clear", 0).andWhere("type", "audio");
+  return db(tableMessages)
+    .count("id as total")
+    .where("type", "audio")
+    .andWhere("clear", 0)
+    .first();
 };
 
 module.exports = {
@@ -66,6 +81,7 @@ module.exports = {
   updateAudio,
   updateAudioByUserCategory,
   getRecentAudios,
+  getAllRecentAudios,
   getAudios,
   getAllAudios,
 };

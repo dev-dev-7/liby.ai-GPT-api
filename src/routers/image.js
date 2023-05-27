@@ -16,7 +16,7 @@ router.put(
   chatController.updateImage
 );
 router.delete("/image/:id", [verifyToken], chatController.deleteImage);
-router.post("/get-images", [verifyToken], chatController.recentImages);
+router.get("/get-images/:page", [verifyToken], chatController.recentImages);
 router.get("/image/explore/:page", [verifyToken], chatController.explore);
 router.put("/image/like/:id", [verifyToken], chatController.like);
 router.get(

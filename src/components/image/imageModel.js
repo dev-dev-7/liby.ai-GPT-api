@@ -37,12 +37,24 @@ const deleteImageById = (id) => {
   return db(tableMessages).where("id", id).del();
 };
 
-const getRecentImages = (user_id) => {
+const getRecentImages = async (user_id, page = "") => {
+  const pagination = await common.getPagination(page, 10);
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("clear", 0)
     .andWhere("type", "image")
-    .orderBy("id", "desc");
+    .orderBy("id", "desc")
+    .limit(pagination.limit)
+    .offset(pagination.offset);
+};
+
+const getAllRecentImages = async (user_id) => {
+  return db(tableMessages)
+    .count("id as total")
+    .where("user_id", user_id)
+    .andWhere("type", "image")
+    .andWhere("clear", 0)
+    .first();
 };
 
 const getImages = async (page = "") => {
@@ -56,7 +68,11 @@ const getImages = async (page = "") => {
 };
 
 const getAllImages = async () => {
-  return db(tableMessages).where("clear", 0).andWhere("type", "image");
+  return db(tableMessages)
+    .count("id as total")
+    .where("type", "image")
+    .andWhere("clear", 0)
+    .first();
 };
 
 module.exports = {
@@ -66,6 +82,7 @@ module.exports = {
   updateImage,
   updateImageByUserCategory,
   getRecentImages,
+  getAllRecentImages,
   getImages,
   getAllImages,
 };

@@ -55,10 +55,23 @@ const createTokenHistory = async (data) => {
     .insert({
       user_id: data.user_id,
       token_id: data.id,
-      token_type: data.type,
+      type: data.type,
       created_at: getDate(),
     })
     .then((id) => console.log(id))
+}
+
+const getDayTokens = async (user_id, type) => {
+  return db(tokenHistoryTable)
+    .count("id as total")
+    .where("user_id", user_id)
+    .andWhere("type", type)
+    .andWhere("created_at", getDate())
+    .first();
+};
+
+const getPlanById = async (id) => {
+  return db(planTable).where('id', id).first()
 }
 
 module.exports = {
@@ -72,4 +85,6 @@ module.exports = {
   deleteUserById,
   getPlans,
   createTokenHistory,
+  getDayTokens,
+  getPlanById
 }

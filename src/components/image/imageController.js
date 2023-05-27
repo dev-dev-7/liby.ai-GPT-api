@@ -1,5 +1,6 @@
 require('dotenv').config()
 const imageModel = require('./imageModel')
+const authModel = require("../auth/authModel");
 const authorization = require('../../helpers/authorization')
 const { validationResult } = require('express-validator')
 const { Configuration, OpenAIApi } = require('openai')
@@ -49,6 +50,7 @@ exports.createImage = async (req, res) => {
                   likes: 0,
                 }
                 chat = await imageModel.createImage(body)
+                await authModel.createTokenHistory(chat)
                 chat.language = req.body.language
                 return res.status(201).json({
                   data: chat,
@@ -95,7 +97,8 @@ exports.createImage = async (req, res) => {
               likes: 0,
             }
             chat = await imageModel.createImage(body)
-            chat.language = req.body.language
+            chat.language = req.body.language;
+            await authModel.createTokenHistory(chat)
             return res.status(201).json({
               data: chat,
             })
@@ -150,6 +153,7 @@ exports.updateImage = async (req, res) => {
                 }
                 chat = await imageModel.updateImage(req.params.id, body)
                 chat.language = req.body.language
+                await authModel.createTokenHistory(chat)
                 return res.status(201).json({
                   data: chat,
                 })
@@ -196,6 +200,7 @@ exports.updateImage = async (req, res) => {
             }
             chat = await imageModel.updateImage(req.params.id, body)
             chat.language = req.body.language
+            await authModel.createTokenHistory(chat)
             return res.status(201).json({
               data: chat,
             })

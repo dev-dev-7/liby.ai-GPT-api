@@ -1,5 +1,6 @@
 require("dotenv").config();
 const videoModel = require("./videoModel");
+const authModel = require("../auth/authModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
@@ -38,6 +39,7 @@ exports.createVideo = async (req, res) => {
           };
           chat = await videoModel.createVideo(body);
           chat.language = req.body.language;
+          await authModel.createTokenHistory(chat);
           return res.status(201).json({
             data: chat,
           });
@@ -66,6 +68,7 @@ exports.createVideo = async (req, res) => {
           likes: 0,
         };
         chat = await videoModel.createVideo(body);
+        await authModel.createTokenHistory(chat);
         chat.language = req.body.language;
         return res.status(201).json({
           data: chat,
@@ -106,6 +109,7 @@ exports.updateVideo = async (req, res) => {
             likes: 0,
           };
           chat = await videoModel.updateVideo(req.params.id, body);
+          await authModel.createTokenHistory(chat);
           return res.status(201).json({
             data: chat,
           });
@@ -134,6 +138,7 @@ exports.updateVideo = async (req, res) => {
           likes: 0,
         };
         chat = await videoModel.updateVideo(req.params.id, body);
+        await authModel.createTokenHistory(chat);
         chat.language = req.body.language;
         return res.status(201).json({
           data: chat,

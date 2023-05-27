@@ -1,5 +1,6 @@
 require("dotenv").config();
 const chatModel = require("./messageModel");
+const authModel = require("../auth/authModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
@@ -66,6 +67,7 @@ exports.createMessage = async (req, res) => {
       };
       chat = await chatModel.createMessage(body);
       chat.language = req.body.language;
+      await authModel.createTokenHistory(chat);
       return res.status(201).json({
         data: chat,
       });
@@ -109,6 +111,7 @@ exports.updateMessage = async (req, res) => {
       };
       chat = await chatModel.updateMessage(req.params.id, body);
       chat.language = req.body.language;
+      await authModel.createTokenHistory(chat);
       return res.status(201).json({
         data: chat,
       });

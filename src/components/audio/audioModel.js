@@ -38,12 +38,13 @@ const deleteAudioById = (id) => {
 };
 
 const getRecentAudios = async (user_id, page = "") => {
-  const pagination = await common.getPagination(page, 10);
+  const pagination = await common.getPagination(page, 20);
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("clear", 0)
     .andWhere("type", "audio")
-    .orderBy("id", "desc").limit(pagination.limit)
+    .orderBy("id", "desc")
+    .limit(pagination.limit)
     .offset(pagination.offset);
 };
 
@@ -57,7 +58,7 @@ const getAllRecentAudios = (user_id) => {
 };
 
 const getAudios = async (page = "1") => {
-  const pagination = await common.getPagination(page, 10);
+  const pagination = await common.getPagination(page, 20);
   return db(tableMessages)
     .where("clear", 0)
     .andWhere("type", "audio")

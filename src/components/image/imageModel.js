@@ -38,7 +38,7 @@ const deleteImageById = (id) => {
 };
 
 const getRecentImages = async (user_id, page = "") => {
-  const pagination = await common.getPagination(page, 10);
+  const pagination = await common.getPagination(page, 20);
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("clear", 0)
@@ -58,7 +58,7 @@ const getAllRecentImages = async (user_id) => {
 };
 
 const getImages = async (page = "") => {
-  const pagination = await common.getPagination(page, 10);
+  const pagination = await common.getPagination(page, 20);
   return db(tableMessages)
     .where("clear", 0)
     .andWhere("type", "image")

@@ -77,7 +77,7 @@ exports.createImage = async (req, res) => {
     });
   } else {
     let completion = await openai.createImage({
-      prompt: question,
+      prompt: question + ":Full size HD image",
       n: 2,
       size: "512x512",
     });
@@ -181,8 +181,8 @@ exports.updateImage = async (req, res) => {
     });
   } else {
     let completion = await openai.createImage({
-      prompt: question,
-      n: 1,
+      prompt: question + ":Full size HD image",
+      n: 2,
       size: "512x512",
     });
     let answer = completion.data.data[0].url;

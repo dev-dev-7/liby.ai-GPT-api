@@ -30,7 +30,7 @@ exports.createImage = async (req, res) => {
     await download(question, fileName, async function () {
       console.log(fileName);
       let stream = fs.createReadStream(fileName);
-      let result = await openai.createImageVariation(stream, 2, "1024x1024");
+      let result = await openai.createImageVariation(stream, 2, "512x512");
       let variation = result.data.data[0].url;
       if (variation) {
         await deleteFile(fileName);
@@ -78,8 +78,8 @@ exports.createImage = async (req, res) => {
   } else {
     let completion = await openai.createImage({
       prompt: question,
-      n: 1,
-      size: "1024x1024",
+      n: 2,
+      size: "512x512",
     });
     let answer = completion.data.data[0].url;
     if (answer) {
@@ -134,7 +134,7 @@ exports.updateImage = async (req, res) => {
     await download(question, fileName, async function () {
       console.log(fileName);
       let stream = fs.createReadStream(fileName);
-      let result = await openai.createImageVariation(stream, 2, "1024x1024");
+      let result = await openai.createImageVariation(stream, 2, "512x512");
       let variation = result.data.data[0].url;
       if (variation) {
         await deleteFile(fileName);
@@ -183,7 +183,7 @@ exports.updateImage = async (req, res) => {
     let completion = await openai.createImage({
       prompt: question,
       n: 1,
-      size: "1024x1024",
+      size: "512x512",
     });
     let answer = completion.data.data[0].url;
     if (answer) {

@@ -77,7 +77,7 @@ exports.createImage = async (req, res) => {
     });
   } else {
     let completion = await openai.createImage({
-      prompt: question + ":Full size HD image",
+      prompt: question + ":In Full Size HD Fantasy Portrait image",
       n: 1,
       size: "512x512",
     });
@@ -181,7 +181,7 @@ exports.updateImage = async (req, res) => {
     });
   } else {
     let completion = await openai.createImage({
-      prompt: question + ":Full size HD image",
+      prompt: question + ":In Full Size HD Fantasy Portrait image",
       n: 1,
       size: "512x512",
     });

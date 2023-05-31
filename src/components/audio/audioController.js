@@ -1,5 +1,6 @@
 require("dotenv").config();
 const audioModel = require("./audioModel");
+const authModel = require("../auth/authModel");
 const authorization = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Configuration, OpenAIApi } = require("openai");
@@ -45,6 +46,7 @@ exports.createAudio = async (req, res) => {
       };
       chat = await audioModel.createAudio(body);
       deleteFile(fileName);
+      await authModel.createTokenHistory(chat);
       return res.status(201).json({
         data: chat,
       });
@@ -84,6 +86,7 @@ exports.updateAudio = async (req, res) => {
       };
       chat = await audioModel.updateAudio(req.params.id, body);
       deleteFile(fileName);
+      await authModel.createTokenHistory(chat);
       return res.status(201).json({
         data: chat,
       });

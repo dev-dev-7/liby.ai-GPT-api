@@ -26,5 +26,6 @@ router.put(
 );
 
 router.get("/plans", [verifyToken], authController.getPlan);
+router.post("/contact", validation.contact, authController.contact);
 
 module.exports = router;

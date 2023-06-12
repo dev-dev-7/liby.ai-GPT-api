@@ -186,7 +186,7 @@ exports.clearMessage = async (req, res) => {
   }
   let user = await authorization.authorization(req, res);
   if (user) {
-    await chatModel.clearMessages(user.user_id, req.params.ids);
+    await chatModel.clearMessages(user.user_id, req.body.ids);
     return res.status(201).json({
       msg: "Messages has been cleared!!!",
     });

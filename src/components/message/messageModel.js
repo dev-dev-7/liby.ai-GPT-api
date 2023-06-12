@@ -71,7 +71,10 @@ const getCategoryById = (id) => {
 };
 
 const clearMessages = async (user_id, ids) => {
-  return db(tableMessages).whereIn("id", ids).update({ clear: 1 });
+  return db(tableMessages)
+    .whereIn("id", ids)
+    .andWhere("user_id", user_id)
+    .update({ clear: 1 });
 };
 
 module.exports = {

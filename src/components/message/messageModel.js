@@ -59,6 +59,7 @@ const getRecentMessages = (user_id, category_id) => {
     .where("user_id", user_id)
     .andWhere("category_id", category_id)
     .andWhere("type", "message")
+    .andWhere("clear", 0)
     .orderBy("id", "desc");
 };
 

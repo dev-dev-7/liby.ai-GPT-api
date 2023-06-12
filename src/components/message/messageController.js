@@ -180,18 +180,15 @@ exports.like = async (req, res) => {
 };
 
 exports.clearMessage = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   let user = await authorization.authorization(req, res);
   if (user) {
-    var body = {
-      clear: 1,
-    };
-    await chatModel.updateMessageByUserCategory(
-      user.user_id,
-      req.params.category_id,
-      body
-    );
+    await chatModel.clearMessages(user.user_id, req.params.ids);
     return res.status(201).json({
-      msg: "Clear action has been execeuted!",
+      msg: "Messages has been cleared!!!",
     });
   } else {
     return res.status(404).json({ errors: [{ msg: "Invalid request" }] });

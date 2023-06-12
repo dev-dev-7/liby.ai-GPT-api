@@ -58,7 +58,6 @@ const getRecentMessages = (user_id, category_id) => {
   return db(tableMessages)
     .where("user_id", user_id)
     .andWhere("category_id", category_id)
-    .andWhere("clear", 0)
     .andWhere("type", "message")
     .orderBy("id", "desc");
 };
@@ -71,6 +70,10 @@ const getCategoryById = (id) => {
   return db(chatCategories).where("id", id).first();
 };
 
+const clearMessages = async (user_id, ids) => {
+  return db(tableMessages).whereIn("id", ids).update({ clear: 1 });
+};
+
 module.exports = {
   createMessage,
   getMessageById,
@@ -81,4 +84,5 @@ module.exports = {
   getCategoryById,
   getLastMessageByCategory,
   getRecentMessages,
+  clearMessages,
 };

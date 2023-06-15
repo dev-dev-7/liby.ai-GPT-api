@@ -2,7 +2,7 @@ exports.getPostFix = async (
   question,
   category_id,
   translate = "English",
-  language = "ar"
+  language = ""
 ) => {
   language = language == "ar" ? "Arabic" : "English";
   switch (category_id) {
